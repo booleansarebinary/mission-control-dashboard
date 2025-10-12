@@ -1,0 +1,1 @@
+My goal is to build a simmulated mission control dashboard. Starting off very simple and then adding features as I learn more about the process. Just trying to explore another side of technology and see if this is something I am interested in.
