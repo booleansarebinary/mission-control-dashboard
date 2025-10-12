@@ -50,7 +50,7 @@ def status_eval(telemDataPoint, threshData):
         if status in ['YELLOW', 'RED']:
             # Compose log line
             log_line = f"{telemDataPoint.get('time', 'NO_TIME')} - {item.upper()}: {value} - {status}\n"
-            with open('erorrlog.txt', 'a') as f:
+            with open('errorlog.txt', 'a') as f:
                 f.write(log_line)
     
     return statuses
