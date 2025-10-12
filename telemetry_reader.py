@@ -20,7 +20,16 @@ def status_eval(telemDataPoint, threshData):
 
     for item in iterative:
         value = telemDataPoint.get(item)
+        if value is None:
+            # Skip or mark as UNKNOWN — your choice
+            statuses[item] = 'UNKNOWN'
+            continue
+
         metric_thresholds = threshData.get(item)
+
+        if not metric_thresholds:
+            statuses[item] = 'NO_THRESHOLDS'
+            continue
 
         green_range = metric_thresholds['green']
         yellow_range = metric_thresholds['yellow']
@@ -37,6 +46,12 @@ def status_eval(telemDataPoint, threshData):
             status = 'RED'
         
         statuses[item] = status
+
+        if status in ['YELLOW', 'RED']:
+            # Compose log line
+            log_line = f"{telemDataPoint.get('time', 'NO_TIME')} - {item.upper()}: {value} - {status}\n"
+            with open('erorrlog.txt', 'a') as f:
+                f.write(log_line)
     
     return statuses
 
