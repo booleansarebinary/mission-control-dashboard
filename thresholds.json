@@ -1,0 +1,17 @@
+{
+  "temperature": {
+    "green": [0, 70],
+    "yellow": [71, 85],
+    "red": [86, 1000]
+  },
+  "battery": {
+    "green": [51, 100],
+    "yellow": [20, 50],
+    "red": [0, 19]
+  },
+  "signal": {
+    "green": [80, 100],
+    "yellow": [50, 79],
+    "red": [0, 49]
+  }
+}

@@ -1,0 +1,5 @@
+[
+  {"time": "00:00", "battery": 98, "temperature": 23.5, "signal": 100},
+  {"time": "00:01", "battery": 30, "temperature": 23.8, "signal": 100},
+  {"time": "00:02", "battery": 95, "temperature": 24.0, "signal": 90}
+]
