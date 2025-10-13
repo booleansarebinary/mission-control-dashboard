@@ -1,5 +1,20 @@
 [
-  {"time": "00:00", "battery": 98, "temperature": 23.5, "signal": 100},
-  {"time": "00:01", "battery": 30, "temperature": 23.8, "signal": 100},
-  {"time": "00:02", "battery": 95, "temperature": 24.0, "signal": 90}
+  {
+    "time": "2025-10-13T14:30:00Z",
+    "battery": 87.5,
+    "temperature": 22.3,
+    "signal": 78.2
+  },
+  {
+    "time": "2025-10-13T14:31:00Z",
+    "battery": 85.0,
+    "temperature": 23.0,
+    "signal": 75.0
+  },
+  {
+    "time": "2025-10-13T14:32:00Z",
+    "battery": 83.7,
+    "temperature": 21.8,
+    "signal": 80.1
+  }
 ]
