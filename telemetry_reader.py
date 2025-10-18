@@ -1,16 +1,21 @@
 import json
 import time
+import os
 
-ITERATIVE_METRICS = ['temperature', 'battery', 'signal']
+ITERATIVE_METRICS = ['temperature', 'battery', 'signal', 'velocity']
+UNITS = {
+    'temperature': '°C',
+    'battery': '%',
+    'signal': '%',
+    'velocity': 'm/s'
+}
+TELEMETRY_FILE = 'telemetry.ndjson'
+THRESHOLDS_FILE = 'thresholds.json'
+ERROR_LOG_FILE = 'errorlog.txt'
 
-def load_json_file(filename):
-    """Load JSON data from a file safely."""
+def load_thresholds(filename):
     try:
         with open(filename, 'r') as f:
-            first_line = f.readline();
-            if not first_line:
-                print(f"{filename} is empty.")
-            f.seek(0)
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Error loading {filename}: {e}")
@@ -45,6 +50,8 @@ def status_eval(telem_data_point, thresh_data):
             status = 'YELLOW'
         elif in_range(value, red_range):
             status = 'RED'
+        else:
+            status = 'UNKNOWN'
 
         statuses[metric] = status
 
@@ -55,33 +62,51 @@ def status_eval(telem_data_point, thresh_data):
     return statuses, log_lines
 
 def main():
-    telem_data = load_json_file('telemetry.json')
-    thresh_data = load_json_file('thresholds.json')
+    try:
+        thresh_data = load_thresholds(THRESHOLDS_FILE)
+        if thresh_data is None:
+            print("Failed to load threshold data.")
+            return
 
-    if telem_data is None or thresh_data is None:
-        print("Failed to load required data files.")
-        return
+        # Wait for telemetry file to exist
+        while not os.path.exists(TELEMETRY_FILE):
+            print("Waiting for telemetry file...")
+            time.sleep(1)
 
-    with open('errorlog.txt', 'a') as log_file:
-        for packet in telem_data:
-            time_data = packet.get('time', 'NO_TIME')
-            battery = packet.get('battery', 'N/A')
-            temperature = packet.get('temperature', 'N/A')
-            signal = packet.get('signal', 'N/A')
+        with open(TELEMETRY_FILE, 'r') as f, open(ERROR_LOG_FILE, 'a') as log_file:
+            # Seek to end if you want to skip old lines or comment this line to read from start
+            # f.seek(0, os.SEEK_END)  
 
-            print(f"Time: {time_data}")
-            print(f"Battery: {battery}%")
-            print(f"Temperature: {temperature}°C")
-            print(f"Signal: {signal}%")
+            while True:
+                line = f.readline()
+                if not line:
+                    time.sleep(0.5)  # No new line, wait and try again
+                    continue
 
-            status, log_lines = status_eval(packet, thresh_data)
-            print(f"Status: {status}")
+                try:
+                    packet = json.loads(line.strip())
+                except json.JSONDecodeError:
+                    # Possibly partial write, skip this line and wait for full line later
+                    continue
 
-            for line in log_lines:
-                log_file.write(line)
+                
+                time_data = packet.get('time', 'NO_TIME')
+                print(f"Time: {time_data}")
 
-            print("--------------")
-            time.sleep(1)  # simulate real-time delay
+                for input in ITERATIVE_METRICS:
+                    value = packet.get(input, 'N/A')
+                    unit = UNITS.get(input, '')
+                    print(f"{input.capitalize()}: {value}{unit}")
+
+                status, log_lines = status_eval(packet, thresh_data)
+                print(f"Status: {status}")
+
+                for log_line in log_lines:
+                    log_file.write(log_line)
+
+                print("--------------")
+    except KeyboardInterrupt:
+         print("\nReader interrupted by user. Exiting.")
 
 if __name__ == "__main__":
     main()
