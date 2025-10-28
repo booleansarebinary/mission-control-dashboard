@@ -2,7 +2,7 @@
   "temperature": {
     "green": [0, 70],
     "yellow": [71, 85],
-    "red": [86, 1000]
+    "red": [86, 200]
   },
   "battery": {
     "green": [51, 100],
