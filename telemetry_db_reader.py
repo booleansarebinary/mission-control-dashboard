@@ -32,7 +32,7 @@ def fetch_new_packets(last_time=None):
 def live_plot():
     plt.ion()
     fig, axes = plt.subplots(len(ITERATIVE_METRICS), 1, figsize=(10, 12), sharex=True)
-    fig.suptitle("🚀 Live Telemetry Dashboard", fontsize=16)
+    fig.suptitle("Live Telemetry Dashboard", fontsize=16)
 
     time_data = []
     value_data = {metric: [] for metric in ITERATIVE_METRICS}
